@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  web:
+    build: ./app
+    env_file: ./app/.env
+    ports:
+      - 8080:8080
+    volumes:
+      - ./app/:/usr/src/app/
+  mongodb:
+    image: 'mongo'
+    environment:
+      - MONGO_INITDB_DATABASE=tood
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - ./containers/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./containers/mongodb/data:/data/db
+    ports:
+      - '27017-27019:27017-27019'
