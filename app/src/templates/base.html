@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Main{% endblock %} - TODO</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='/node_modules/bootstrap/dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='node_modules/bootstrap/dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="container mt-4">
@@ -11,4 +12,5 @@
     {% endblock %}
 </div>
 </body>
+<script src="{{ url_for('static', filename='main.js') }}"></script>
 </html>

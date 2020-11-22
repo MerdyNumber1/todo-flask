@@ -3,5 +3,13 @@
 {% block title %} Tasks {% endblock %}
 
 {% block content %}
-    <div class="btn btn-primary">Add Task</div>
+<div class="tasks__container d-flex flex-column align-items-center">
+    <form action="" class="w-100">
+        <div class="form-group">
+            {{ form.title(size=256, class_="w-100 form-control") }}
+            <button type="submit" class="tasks__submit btn btn-primary btn-lg w-100 mt-2">Add Task</button>
+        </div>
+        {{ form.hidden_tag() }}
+    </form>
+</div>
 {% endblock %}
