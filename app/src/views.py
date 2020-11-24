@@ -32,7 +32,7 @@ def login():
     form = LoginForm()
 
     if request.method == 'GET':
-        return render_template('auth.login')
+        return render_template('login.html', form=form)
 
     if form.validate_on_submit():
         email = form.email.data
@@ -57,21 +57,21 @@ def signup():
 
     if request.method == 'GET':
         return render_template('signup.html', form=form)
-    elif request.method == 'POST':
-        if form.validate_on_submit():
-            email = form.email.data
-            name = form.name.data
-            password = form.password.data
 
-            user = User.query.filter_by(email=email).first()
+    if form.validate_on_submit():
+        email = form.email.data
+        name = form.name.data
+        password = form.password.data
 
-            if user:
-                flash('User already exists')
-                return redirect(url_for('auth.signup_view'))
+        user = User.query.filter_by(email=email).first()
 
-            new_user = User(email=email, name=name, password_hash=bcrypt.generate_password_hash(password.encode('utf-8')))
+        if user:
+            flash('User already exists')
+            return redirect(url_for('auth.signup_view'))
 
-            db.session.add(new_user)
-            db.session.commit()
+        new_user = User(email=email, name=name, password_hash=bcrypt.generate_password_hash(password.encode('utf-8')))
 
-            return redirect(url_for('auth.login_view'))
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect(url_for('auth.login_view'))
