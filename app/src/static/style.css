@@ -1,4 +1,4 @@
-.tasks__container {
+.tasks__container, .signup__container, .login__container {
     margin: 0 auto;
     width: 500px;
     max-width: 90%;

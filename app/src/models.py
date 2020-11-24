@@ -1,5 +1,6 @@
 from .main import db
 from datetime import datetime
+from flask_login import UserMixin
 
 
 class BaseModel(db.Model):
@@ -19,8 +20,9 @@ class Task(BaseModel):
         return f'<Task {self.id}>'
 
 
-class User(BaseModel):
+class User(UserMixin, BaseModel):
     email = db.Column(db.String(64), index=True, unique=True)
+    name = db.Column(db.String(64))
     password_hash = db.Column(db.String(128))
     tasks = db.relationship('Task', backref='user', lazy='dynamic')
 
