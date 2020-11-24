@@ -15,6 +15,6 @@ def login_view():
     return login()
 
 
-@auth_bp.route('/signup')
+@auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup_view():
     return signup()

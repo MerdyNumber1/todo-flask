@@ -1,20 +1,13 @@
 [[source]]
-name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
-
-[dev-packages]
+name = "pypi"
 
 [packages]
-flask = "*"
-flask-sqlalchemy = "*"
-flask-migrate = "*"
-psycopg2 = "*"
-flask-wtf = "*"
-flask-login = "*"
 flask-bcrypt = "*"
-email-validator = "*"
 wtforms = {extras = ["email"], version = "*"}
+
+[dev-packages]
 
 [requires]
 python_version = "3.9"
