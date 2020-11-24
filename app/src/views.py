@@ -6,15 +6,16 @@ from .main import db
 
 
 class TasksView(MethodView):
-    form = TaskForm()
 
     def get(self):
+        form = TaskForm()
         tasks = Task.query.all()
-        return render_template('tasks.html', form=self.form, tasks=tasks)
+        return render_template('tasks.html', form=form, tasks=tasks)
 
     def post(self):
+        form = TaskForm()
         if self.form.validate_on_submit():
-            task = Task(title=self.form.title)
+            task = Task(title=form.title)
             db.session.add(task)
             db.session.commit()
             return 200
@@ -25,6 +26,9 @@ class TaskView(MethodView):
         return id
 
 
-class UserView(MethodView):
-    def get(self):
-        return 'hello!'
+def login():
+    return render_template('login.html')
+
+
+def signup():
+    return render_template('signup.html')

@@ -11,3 +11,6 @@ migrate = Migrate(app, db)
 
 
 from . import routes, models
+
+app.register_blueprint(routes.auth_bp, url_prefix='/auth')
+app.register_blueprint(routes.tasks_bp, url_prefix='/tasks')
