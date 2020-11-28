@@ -12,15 +12,19 @@ class BaseModel(db.Model):
 
 
 class Task(BaseModel):
+    __tablename__ = 'tasks'
+
     title = db.Column(db.String(256))
     done = db.Column(db.Boolean, default=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         return f'<Task {self.id}>'
 
 
 class User(UserMixin, BaseModel):
+    __tablename__ = 'users'
+
     email = db.Column(db.String(64), index=True, unique=True)
     name = db.Column(db.String(64))
     password_hash = db.Column(db.String(128))

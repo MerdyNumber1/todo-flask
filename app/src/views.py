@@ -4,10 +4,16 @@ from .models import Task
 from .forms import TaskForm, SignupForm, LoginForm
 from .main import db, bcrypt
 from .models import User
-from flask_login import login_user
+from flask_login import login_user, login_required
+
+
+@login_required
+def root():
+    return redirect(url_for('main.tasks'))
 
 
 class TasksView(MethodView):
+    decorators = [login_required]
 
     def get(self):
         form = TaskForm()
@@ -24,6 +30,8 @@ class TasksView(MethodView):
 
 
 class TaskView(MethodView):
+    decorators = [login_required]
+
     def get(self, id=None):
         return id
 
@@ -40,8 +48,8 @@ def login():
 
         user = User.query.filter_by(email=email).first()
 
-        if user and bcrypt.check_password_hash(user.password_hash, password.encode('utf-8')):
-            login_user(User, remember=True)
+        if user and bcrypt.check_password_hash(user.password_hash, password):
+            login_user(user, remember=True)
             return redirect(url_for('main.tasks'))
 
         flash('Please check your login details and try again')
@@ -69,7 +77,9 @@ def signup():
             flash('User already exists')
             return redirect(url_for('auth.signup_view'))
 
-        new_user = User(email=email, name=name, password_hash=bcrypt.generate_password_hash(password.encode('utf-8')))
+        new_user = User(email=email,
+                        name=name,
+                        password_hash=bcrypt.generate_password_hash(password.encode('utf-8')).decode('utf-8'))
 
         db.session.add(new_user)
         db.session.commit()
