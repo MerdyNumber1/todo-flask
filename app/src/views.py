@@ -2,7 +2,7 @@ from flask.views import MethodView
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from .models import Task
 from .forms import TaskForm, SignupForm, LoginForm
-from .main import db, bcrypt
+from .main import db, bcrypt, app
 from .models import User
 from flask_login import login_user, login_required, current_user
 
@@ -17,16 +17,17 @@ class TasksView(MethodView):
 
     def get(self):
         form = TaskForm()
-        tasks = Task.query.all()
+        tasks = Task.query.filter_by(user_id=current_user.get_id()).all()
         return render_template('tasks.html', form=form, tasks=tasks)
 
     def post(self):
         form = TaskForm()
         if form.validate_on_submit():
-            task = Task(title=form.title.data)
+            task = Task(title=form.title.data, user_id=current_user.get_id())
             db.session.add(task)
             db.session.commit()
             return jsonify(success=True, task={
+                'id': task.id,
                 'title': task.title,
                 'done': task.done
             })
@@ -36,7 +37,9 @@ class TasksView(MethodView):
 class TaskView(MethodView):
     decorators = [login_required]
 
-    def get(self, id=None):
+    def delete(self, id=None):
+        if id is None:
+            return jsonify(success=False)
         return id
 
 
