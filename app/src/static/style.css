@@ -3,3 +3,7 @@
     width: 500px;
     max-width: 90%;
 }
+
+.pointer {
+    cursor: pointer;
+}
