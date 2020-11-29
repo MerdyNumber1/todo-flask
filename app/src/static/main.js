@@ -1,14 +1,15 @@
-let addTaskForm = document.querySelector('.tasks__submit')
+let taskForm = document.querySelector('.tasks__form')
 
-if(addTaskForm.length) {
-    addTaskForm.onsubmit = async function(e) {
+if(taskForm) {
+    taskForm.onsubmit = async function(e) {
         e.preventDefault()
-        fetch('/tasks', {
+        fetch('', {
             method: 'POST',
             body: new FormData(this)
         })
+            .then(res => res.json())
             .then(res => {
-                console.log(this.title)
+                console.log(res)
             })
     }
 }

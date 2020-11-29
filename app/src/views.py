@@ -1,10 +1,10 @@
 from flask.views import MethodView
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from .models import Task
 from .forms import TaskForm, SignupForm, LoginForm
 from .main import db, bcrypt
 from .models import User
-from flask_login import login_user, login_required
+from flask_login import login_user, login_required, current_user
 
 
 @login_required
@@ -18,15 +18,19 @@ class TasksView(MethodView):
     def get(self):
         form = TaskForm()
         tasks = Task.query.all()
-        return render_template('tasks/tasks.html', form=form, tasks=tasks)
+        return render_template('tasks.html', form=form, tasks=tasks)
 
     def post(self):
         form = TaskForm()
         if form.validate_on_submit():
-            task = Task(title=form.title)
+            task = Task(title=form.title.data)
             db.session.add(task)
             db.session.commit()
-            return 200
+            return jsonify(success=True, task={
+                'title': task.title,
+                'done': task.done
+            })
+        return jsonify(success=False)
 
 
 class TaskView(MethodView):
