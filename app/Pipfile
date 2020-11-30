@@ -15,6 +15,7 @@ flask-login = "*"
 flask-bcrypt = "*"
 email-validator = "*"
 wtforms = {extras = ["email"], version = "*"}
+flask-limiter = "*"
 
 [requires]
 python_version = "3.9"

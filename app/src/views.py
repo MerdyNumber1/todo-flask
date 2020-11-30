@@ -2,9 +2,9 @@ from flask.views import MethodView
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from .models import Task
 from .forms import TaskForm, SignupForm, LoginForm
-from .main import db, bcrypt, app
+from .main import db, bcrypt, app, limiter
 from .models import User
-from flask_login import login_user, login_required, current_user
+from flask_login import login_user, login_required, current_user, logout_user
 
 
 @login_required
@@ -13,7 +13,7 @@ def root():
 
 
 class TasksView(MethodView):
-    decorators = [login_required]
+    decorators = [login_required, limiter.limit('120 per minute')]
 
     def get(self):
         form = TaskForm()
@@ -31,18 +31,48 @@ class TasksView(MethodView):
                 'title': task.title,
                 'done': task.done
             })
-        return jsonify(success=False)
+        return jsonify(success=False), 400
 
 
 class TaskView(MethodView):
-    decorators = [login_required]
+    decorators = [login_required, limiter.limit('120 per minute')]
 
-    def delete(self, id=None):
-        if id is None:
-            return jsonify(success=False)
-        return id
+    def delete(self, id):
+
+        task = Task.query.filter_by(user_id=current_user.get_id(), id=id).first()
+
+        if not task:
+            return jsonify(success=False), 404
+
+        db.session.delete(task)
+        db.session.commit()
+        return jsonify(succss=True)
+
+    def put(self, id):
+
+        if request.is_json:
+
+            task = Task.query.filter_by(user_id=current_user.get_id(), id=id).first()
+
+            if not task:
+                return jsonify(success=False), 404
+
+            req = request.get_json()
+
+            if req['title']:
+                task.title = req['title']
+            if req['done']:
+                task.done = req['done']
+
+            db.session.add(task)
+            db.session.commit()
+
+            return jsonify(success=True), 200
+
+        return jsonify(success=False), 400
 
 
+@limiter.limit('15 per minute')
 def login():
     form = LoginForm()
 
@@ -67,6 +97,7 @@ def login():
     return redirect(url_for('auth.login_view'))
 
 
+@limiter.limit('15 per minute')
 def signup():
     form = SignupForm()
 
@@ -92,3 +123,9 @@ def signup():
         db.session.commit()
 
         return redirect(url_for('auth.login_view'))
+
+
+@limiter.limit('30 per minute')
+def logout():
+    logout_user()
+    return redirect(url_for('auth.login_view'))

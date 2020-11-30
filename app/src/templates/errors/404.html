@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block title %} Not found {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Not found</h1>
+    <a href="{{ url_for('root_view') }}">Go to main page</a>
+</div>
+{% endblock %}

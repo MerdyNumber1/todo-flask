@@ -5,6 +5,15 @@
 {% block content %}
 <div class="login__container d-flex flex-column align-items-center">
     <h1>Login</h1>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-danger w-100 mt-2">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+
     <form action="" method="POST" class="w-100">
         <div class="form-group">
             {{ form.email(size=256, class_="w-100 mb-2 form-control", placeholder="Email") }}

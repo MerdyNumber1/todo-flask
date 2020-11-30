@@ -1,7 +1,7 @@
 let taskForm = document.querySelector('.tasks__form')
 
 if (taskForm) { // form for add new task
-    taskForm.onsubmit = async function (e) {
+    taskForm.onsubmit = function (e) {
         e.preventDefault()
         const data = new FormData(this)
 
@@ -29,7 +29,7 @@ if (taskForm) { // form for add new task
                                    type="checkbox"
                                    ${res.task.done && 'checked'}>
                             <p class="tasks__title m-0">${res.task.title}</p>
-                            <input class="tasks__title-input d-none" value="${res.task.title}" type="text">
+                            <input maxlength="255" class="tasks__title-input d-none" value="${res.task.title}" type="text" required>
                         </div>
     
                         <div class="d-flex align-items-center">
@@ -95,9 +95,11 @@ if (tasks) {
 }
 
 function toggleEditTask(taskEl) {
-    taskEl.querySelector('.tasks__title').innerText = taskEl.querySelector('.tasks__title-input').value
-    taskEl.querySelector('.tasks__title').classList.toggle('d-none')
-    taskEl.querySelector('.tasks__title-input').classList.toggle('d-none')
-    taskEl.querySelector('.tasks__edit').classList.toggle('d-none')
-    taskEl.querySelector('.tasks__save-edit').classList.toggle('d-none')
+    if (!taskEl.querySelector('.tasks__title-input').value && taskEl.querySelector('.tasks__edit').className.includes('d-none')) {
+        taskEl.querySelector('.tasks__title').innerText = taskEl.querySelector('.tasks__title-input').value
+        taskEl.querySelector('.tasks__title').classList.toggle('d-none')
+        taskEl.querySelector('.tasks__title-input').classList.toggle('d-none')
+        taskEl.querySelector('.tasks__edit').classList.toggle('d-none')
+        taskEl.querySelector('.tasks__save-edit').classList.toggle('d-none')
+    }
 }

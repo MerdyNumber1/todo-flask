@@ -1,24 +1,46 @@
-{% extends 'base.html' %}
+{% extends 'base_main.html' %}
 
 {% block title %} Tasks {% endblock %}
 
-{% block content %}
+{% block main_content %}
 <div class="tasks__container d-flex flex-column align-items-center">
     <form action="" method="POST" class="w-100 tasks__form">
         <div class="form-group">
-            {{ form.title(size=256, class_="w-100 form-control") }}
+            {{ form.title(size=256, class_="w-100 form-control tasks__add-input", placeholder='Task title...') }}
             <button type="submit" class="tasks__submit btn btn-primary btn-lg w-100 mt-2">Add Task</button>
         </div>
         {{ form.hidden_tag() }}
     </form>
 
     <div class="mt-3 mb-5 w-100 {% if tasks | length < 1 %} d-none {% endif %} tasks__wrapper">
-        <ul class="card list-group list-group-flush tasks__content">
+        <ul class="list-group list-group-flush tasks__content">
         {% for task in tasks %}
-            <li class="list-group-item">
+            <li class="list-group-item tasks__task">
                 <div class="w-100 d-flex justify-content-between align-items-center">
-                    {{ task.title }}
-                    <input type="checkbox" {% if task.done %} checked {% endif %}>
+                    <div class="d-flex align-items-center">
+                        <input style="width: 15px; height: 15px;"
+                               class="tasks__done mr-2 pointer"
+                               data-id="{{ task.id }}"
+                               type="checkbox"
+                               {% if task.done %} checked {% endif %}>
+                        <p class="tasks__title m-0">{{ task.title }}</p>
+                        <input maxlength="255" class="tasks__title-input d-none" value="{{ task.title }}" type="text" required>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <img class="tasks__edit mr-2 pointer"
+                             src="/static/node_modules/bootstrap-icons/icons/pencil-square.svg"
+                             alt="">
+                        <img data-id="{{ task.id }}"
+                             class="tasks__save-edit mr-2 pointer d-none"
+                             src="/static/node_modules/bootstrap-icons/icons/check.svg"
+                             width="25" height="25"
+                             alt="">
+                        <img data-id="{{ task.id }}"
+                             class="tasks__remove pointer"
+                             src="/static/node_modules/bootstrap-icons/icons/trash.svg"
+                             alt="">
+                    </div>
                 </div>
             </li>
         {% endfor %}
