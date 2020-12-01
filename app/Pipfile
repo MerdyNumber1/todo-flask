@@ -16,6 +16,7 @@ flask-bcrypt = "*"
 email-validator = "*"
 wtforms = {extras = ["email"], version = "*"}
 flask-limiter = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.9"
