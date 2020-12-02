@@ -13,6 +13,7 @@ services:
       - ${APP_PORT}:${APP_PORT}
     volumes:
       - ./app/:/usr/src/app/
+      - /usr/src/app/src/static/node_modules
   postgres:
     image: postgres
     restart: always

@@ -5,17 +5,18 @@
 $ cp .env.example .env  # set services env vars here
 $ cd app 
 $ cp .env.example .env  # set app env vars here
-$ cd src/static && yarn install && cd ../../..
 ```
 #### For development:
 ```sh
-$ docker-compose --file docker-compose.dev.yml up --build
+$ make dev-build
+$ make dev
 ```
 #### For production:
 ```sh
-$ docker-compose --file docker-compose.prod.yml up --build
+$ make prod-build
+$ make prod
 ```
-### Then make migrations
+#### Then make migrations:
 ```sh
-$ docker-compose exec web pipenv run flask db upgrade
+$ make migration
 ```

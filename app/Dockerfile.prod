@@ -1,7 +1,14 @@
+FROM node:15 as frontend_build
+
+COPY . .
+
+RUN cd ./src/static && yarn install
+
+
 FROM python:3.9
 
 WORKDIR /usr/src/app
-COPY . ./
+COPY --from=frontend_build . .
 
 RUN pip install pipenv && pipenv install
 
