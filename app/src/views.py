@@ -1,10 +1,12 @@
-from flask.views import MethodView
 from flask import render_template, request, redirect, url_for, flash, jsonify
-from .models import Task
+from flask.views import MethodView
+from flask_login import login_required, current_user, logout_user
+
+from .exceptions import UserExistsError
 from .forms import TaskForm, SignupForm, LoginForm
-from .main import db, bcrypt, app, limiter
-from .models import User
-from flask_login import login_user, login_required, current_user, logout_user
+from .main import db, limiter
+from .models import Task
+from .services import UserService, TaskService
 
 
 @login_required
@@ -39,14 +41,10 @@ class TaskView(MethodView):
 
     def delete(self, id):
 
-        task = Task.query.filter_by(user_id=current_user.get_id(), id=id).first()
-
-        if not task:
+        if TaskService.delete_task(id):
+            return jsonify(succss=True)
+        else:
             return jsonify(success=False), 404
-
-        db.session.delete(task)
-        db.session.commit()
-        return jsonify(succss=True)
 
     def put(self, id):
 
@@ -83,16 +81,12 @@ def login():
         email = form.email.data
         password = form.password.data
 
-        user = User.query.filter_by(email=email).first()
-
-        if user and bcrypt.check_password_hash(user.password_hash, password):
-            login_user(user, remember=True)
+        if UserService.login_user(email, password):
             return redirect(url_for('main.tasks'))
-
-        flash('Please check your login details and try again')
-
+        else:
+            flash('Please check your login details and try again', 'danger')
     else:
-        flash('Invalid data')
+        flash('Invalid data', 'danger')
 
     return redirect(url_for('auth.login_view'))
 
@@ -109,20 +103,19 @@ def signup():
         name = form.name.data
         password = form.password.data
 
-        user = User.query.filter_by(email=email).first()
-
-        if user:
-            flash('User already exists')
+        try:
+            UserService.create_user(email, name, password)
+        except UserExistsError:
+            flash('User already exists', 'danger')
             return redirect(url_for('auth.signup_view'))
 
-        new_user = User(email=email,
-                        name=name,
-                        password_hash=bcrypt.generate_password_hash(password.encode('utf-8')).decode('utf-8'))
-
-        db.session.add(new_user)
-        db.session.commit()
-
+        flash('You have successfully registered, please login to continue', 'success')
         return redirect(url_for('auth.login_view'))
+
+    else:
+        flash('Invalid data', 'danger')
+
+    return redirect(url_for('auth.signup_view'))
 
 
 @limiter.limit('30 per minute')
