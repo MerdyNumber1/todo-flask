@@ -3,7 +3,7 @@ import bcrypt
 
 from flask_login import UserMixin
 
-from .main import db
+from .main import db, app
 
 
 class BaseModel(db.Model):
@@ -34,10 +34,12 @@ class User(UserMixin, BaseModel):
     tasks = db.relationship('Task', backref='user', lazy='dynamic')
 
     def set_password(self, password):
-        self.password = bcrypt.generate_password_hash(password.encode('utf-8')).decode('utf-8')
+        self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-    def check_passwords(self, password):
-        bcrypt.check_password_hash(self.password, password)
+    def check_password(self, password):
+        app.logger.info(password)
+        app.logger.info(self.password)
+        bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
 
     def __repr__(self):
         return f'<User {self.id}>'

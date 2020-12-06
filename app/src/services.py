@@ -15,7 +15,8 @@ class UserService:
         if user:
             raise UserExistsError
 
-        new_user = User(email=email, name=name, password=password)
+        new_user = User(email=email, name=name)
+        new_user.set_password(password)
 
         db.session.add(new_user)
         db.session.commit()
@@ -24,7 +25,7 @@ class UserService:
         user = self.find_user_by_email(email)
 
         if user:
-            if user.check_passwords(password):
+            if user.check_password(password):
                 login_user(user, remember=True)
                 return user
         else:
@@ -62,6 +63,13 @@ class TaskService:
         if done is not None:
             task.done = done
 
+        db.session.add(task)
+        db.session.commit()
+
+        return task
+
+    def create_task(self, title):
+        task = Task(title=title, user_id=current_user.get_id())
         db.session.add(task)
         db.session.commit()
 

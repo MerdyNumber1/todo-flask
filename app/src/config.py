@@ -9,4 +9,4 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(os.path.abspath(os.path.dirname(__file__)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 CSRF_ENABLED = True
-SECRET_KEY = '9jkgGDF4awer76'  # you have to change this variable
+SECRET_KEY = os.getenv('APP_SECRET_KEY')  # you have to change this variable
